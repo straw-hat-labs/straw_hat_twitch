@@ -22,10 +22,10 @@ defmodule StrawHat.Twitch.Chat.Message do
   end
 
   def on_depart(%Session{} = session, channel_name) do
-    full_username = Message.full_username(session)
-    channel = Message.channel_name(channel_name)
+    full_username = full_username(session)
+    channel = channel_name(channel_name)
 
-    "#{full_username} PART #{channel}\r\n" do
+    "#{full_username} PART #{channel}\r\n"
   end
 
   def message(channel_name, message) do
