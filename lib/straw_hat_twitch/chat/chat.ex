@@ -23,6 +23,22 @@ defmodule StrawHat.Twitch.Chat do
     socket_message(conn_pid, Message.message(channel_name, message))
   end
 
+  def authenticate(conn_pid, %Credentials{} = credentials) do
+    socket_message(conn_pid, Message.password(credentials.password))
+    socket_message(conn_pid, Message.nick(credentials.username))
+
+    receive do
+      {:gun_ws, _, _, frame} -> on_authenticate(conn_pid, credentials, frame)
+      _ -> {:error, :authorization_failed}
+    after
+      @timeout -> {:error, :authorization_timeout}
+    end
+  end
+
+  defp on_authenticate(conn_pid, credentials, _frame) do
+    {:ok, Session.new(conn_pid, credentials.username)}
+  end
+
   defp upgrade_websocket(conn_pid) do
     :gun.ws_upgrade(conn_pid, "/")
 
