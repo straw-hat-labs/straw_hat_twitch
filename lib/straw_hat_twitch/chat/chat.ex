@@ -1,5 +1,5 @@
 defmodule StrawHat.Twitch.Chat do
-  alias StrawHat.Twitch.Chat.{Credentials, Session, Message}
+  alias StrawHat.Twitch.Chat.{Credentials, Message}
 
   @twitch_endpoint 'irc-ws.chat.twitch.tv'
   @timeout 1000 * 60
@@ -7,94 +7,77 @@ defmodule StrawHat.Twitch.Chat do
   def connect do
     with {:ok, conn_pid} <- :gun.open(@twitch_endpoint, 443),
          {:ok, _} = :gun.await_up(conn_pid),
-         {:ok, conn_pid} = upgrade_websocket(conn_pid),
+         _ref = :gun.ws_upgrade(conn_pid, "/"),
          do: {:ok, conn_pid}
   end
 
-  def disconnect(%Session{} = session) do
-    :gun.close(session.conn_pid)
+  def disconnect(state) do
+    :gun.close(state.conn_pid)
   end
 
-  def send_pong_message(%Session{} = session) do
-    socket_message(session.conn_pid, Message.pong())
+  def authenticate(state) do
+    socket_message(state, Message.password(state.credentials.password), [filtered: true])
+    socket_message(state, Message.nick(state.credentials.username))
   end
 
-  def send_channel_message(%Session{} = session, channel_name, message) do
-    socket_message(session.conn_pid, Message.message(channel_name, message))
+  def send_channel_message(state, channel_name, message) do
+    socket_message(state, Message.message(channel_name, message))
   end
 
-  def authenticate(conn_pid, %Credentials{} = credentials) do
-    socket_message(conn_pid, Message.password(credentials.password))
-    socket_message(conn_pid, Message.nick(credentials.username))
-
-    receive do
-      {:gun_ws, _, _, frame} -> on_authenticate(conn_pid, credentials, frame)
-      _ -> {:error, :authorization_failed}
-    after
-      @timeout -> {:error, :authorization_timeout}
-    end
-  end
-
-  def depart_channel(session, channel_name) do
-    socket_message(session.conn_pid, Message.depart(channel_name))
-
-    receive do
-      {:gun_ws, _, _, frame} -> on_depart_channel(session, channel_name, frame)
-      _ -> {:error, :depart_channel_failed}
-    after
-      @timeout -> {:error, :depart_channel_timeout}
-    end
-  end
-
-  def join_channel(%Session{} = session, channel_name) do
-    socket_message(session.conn_pid, Message.join(channel_name))
-    confirm_joining_channel(session, channel_name)
-  end
-
-  defp confirm_joining_channel(session, channel_name) do
-    receive do
-      {:gun_ws, _, _, frame} -> on_joining_channel(session, channel_name, frame)
-      _ -> {:error, :join_channel_failed}
-    after
-      @timeout -> {:error, :join_channel_timeout}
-    end
-  end
-
-  def on_joining_channel(session, channel_name, {:text, message}) do
-    first_message = Message.on_join_first(session, channel_name)
-    second_message = Message.on_join_second(session, channel_name)
-
-    case message do
-      ^first_message -> confirm_joining_channel(session, channel_name)
-      ^second_message -> {:ok, session}
-      _ -> {:error, :join_channel_failed}
-    end
-  end
-
-  defp on_depart_channel(session, channel_name, {:text, message}) do
-    if message == Message.on_depart(session, channel_name) do
-      {:ok, session}
+  def join_channel(state, channel_name) do
+    if Enum.member?(state.channels, channel_name) do
+      state
     else
-      {:error, :depart_channel_failed}
+      socket_message(state, Message.join(channel_name))
     end
   end
 
-  defp on_authenticate(conn_pid, credentials, _frame) do
-    {:ok, Session.new(conn_pid, credentials.username)}
-  end
-
-  defp upgrade_websocket(conn_pid) do
-    :gun.ws_upgrade(conn_pid, "/")
-
-    receive do
-      {:gun_upgrade, _, _, [<<"websocket">>], _} -> {:ok, conn_pid}
-      _ -> {:error, :websocket_upgrade_failed}
-    after
-      @timeout -> {:error, :websocket_upgrade_timeout}
+  def leave_channel(state, channel_name) do
+    if Enum.member?(state.channels, channel_name) do
+      socket_message(state, Message.part(channel_name))
+    else
+      state
     end
   end
 
-  defp socket_message(conn_pid, message) do
-    :gun.ws_send(conn_pid, {:text, message})
+  def handle_message(state, message) do
+    cond do
+      Message.ping?(message) -> send_pong_message(state)
+      Message.welcome_message?(message) -> set_ready(state)
+      Message.join?(message) -> add_channel(state, message)
+      Message.part?(message) -> remove_channel(state, message)
+      true -> state
+    end
+  end
+
+  defp send_pong_message(state) do
+    socket_message(state, Message.pong())
+  end
+
+  defp set_ready(state) do
+    Map.put(state, :is_ready, true)
+  end
+
+  defp add_channel(state, message) do
+    channel_name =
+      message
+      |> Message.parse_join()
+      |> Map.get("channel_name")
+    channels = [channel_name] ++ state.channels
+    Map.put(state, :channels, channels)
+  end
+
+  defp remove_channel(state, message) do
+    channel_name =
+      message
+      |> Message.parse_part()
+      |> Map.get("channel_name")
+    channels = List.delete(state.channels, channel_name)
+    Map.put(state, :channels, channels)
+  end
+
+  defp socket_message(state, message, opts \\ []) do
+    :gun.ws_send(state.conn_pid, {:text, message})
+    state
   end
 end
