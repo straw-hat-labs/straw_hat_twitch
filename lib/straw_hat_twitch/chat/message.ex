@@ -1,6 +1,4 @@
 defmodule StrawHat.Twitch.Chat.Message do
-  alias StrawHat.Twitch.Chat.Session
-
   def password(password) do
     "PASS #{password}"
   end
@@ -17,46 +15,27 @@ defmodule StrawHat.Twitch.Chat.Message do
     "JOIN ##{channel_name}"
   end
 
-  def depart(channel_name) do
+  def part(channel_name) do
     "PART ##{channel_name}"
-  end
-
-  def on_depart(%Session{} = session, channel_name) do
-    full_username = full_username(session)
-    channel = channel_name(channel_name)
-
-    "#{full_username} PART #{channel}\r\n"
   end
 
   def message(channel_name, message) do
     "PRIVMSG ##{channel_name} :#{message}"
   end
 
-  def full_username(%Session{} = session) do
-    ":#{session.username}!#{session.username}@#{username(session)}"
+  def welcome_message?(message) do
+    String.match?(message,  ~r/:tmi.twitch.tv 001 \S+ :Welcome, GLHF!\r\n/)
   end
 
-  def username(session) do
-    "#{session.username}.tmi.twitch.tv"
+  def ping?(message) do
+    message == "PING :tmi.twitch.tv\r\n"
   end
 
-  def channel_name(channel_name) do
-    "##{channel_name}"
+  def join?(message) do
+    String.match?(message, ~r/\S+ JOIN #\S+\r\n/)
   end
 
-  def on_join_first(%Session{} = session, channel_name) do
-    full_username = full_username(session)
-
-    "#{full_username} JOIN ##{channel_name}\r\n"
-  end
-
-  def on_join_second(%Session{} = session, channel_name) do
-    username = username(session)
-    channel = channel_name(channel_name)
-
-    first_chunk = ":#{username} 353 #{session.username} = #{channel} :#{session.username}\r\n"
-    second_chunk = ":#{username} 366 #{session.username} #{channel} :End of /NAMES list\r\n"
-
-    "#{first_chunk}#{second_chunk}"
+  def part?(message) do
+    String.match?(message, ~r/\S+ PART #\S+\r\n/)
   end
 end
