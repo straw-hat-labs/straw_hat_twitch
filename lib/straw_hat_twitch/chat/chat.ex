@@ -35,6 +35,25 @@ defmodule StrawHat.Twitch.Chat do
     end
   end
 
+  def depart_channel(session, channel_name) do
+    socket_message(session.conn_pid, Message.depart())
+
+    receive do
+      {:gun_ws, _, _, frame} -> on_depart_channel(session, channel_name, frame)
+      _ -> {:error, :depart_channel_failed}
+    after
+      @timeout -> {:error, :depart_channel_timeout}
+    end
+  end
+
+  defp on_depart_channel(session, channel_name, {:text, message}) do
+    if message == Message.on_depart(session, channel) do
+      {:ok, session}
+    else
+      {:error, :depart_channel_failed}
+    end
+  end
+
   defp on_authenticate(conn_pid, credentials, _frame) do
     {:ok, Session.new(conn_pid, credentials.username)}
   end
