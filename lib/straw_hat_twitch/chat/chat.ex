@@ -11,6 +11,10 @@ defmodule StrawHat.Twitch.Chat do
          do: {:ok, conn_pid}
   end
 
+  def disconnect(%Session{} = session) do
+    :gun.close(session.conn_pid)
+  end
+
   defp upgrade_websocket(conn_pid) do
     :gun.ws_upgrade(conn_pid, "/")
 
