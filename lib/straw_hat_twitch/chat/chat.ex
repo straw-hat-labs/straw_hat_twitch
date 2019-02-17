@@ -46,6 +46,31 @@ defmodule StrawHat.Twitch.Chat do
     end
   end
 
+  def join_channel(%Session{} = session, channel_name) do
+    socket_message(session.conn_pid, Message.join(channel_name))
+    confirm_joining_channel(session, channel_name)
+  end
+
+  defp confirm_joining_channel(session, channel_name) do
+    receive do
+      {:gun_ws, _, _, frame} -> on_joining_channel(session, channel_name, frame)
+      _ -> {:error, :join_channel_failed}
+    after
+      @timeout -> {:error, :join_channel_timeout}
+    end
+  end
+
+  def on_joining_channel(session, channel_name, {:text, message}) do
+    first_message = Message.on_join_first(session, channel_name)
+    second_message = Message.on_join_second(session, channel_name)
+
+    case message do
+      ^first_message -> confirm_joining_channel(session, channel_name)
+      ^second_message -> {:ok, session}
+      _ -> {:error, :join_channel_failed}
+    end
+  end
+
   defp on_depart_channel(session, channel_name, {:text, message}) do
     if message == Message.on_depart(session, channel_name) do
       {:ok, session}
