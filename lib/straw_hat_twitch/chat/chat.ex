@@ -15,6 +15,10 @@ defmodule StrawHat.Twitch.Chat do
     :gun.close(session.conn_pid)
   end
 
+  def pong(conn_pid) do
+    socket_message(conn_pid, Message.pong())
+  end
+
   defp upgrade_websocket(conn_pid) do
     :gun.ws_upgrade(conn_pid, "/")
 
@@ -24,5 +28,9 @@ defmodule StrawHat.Twitch.Chat do
     after
       @timeout -> {:error, :websocket_upgrade_timeout}
     end
+  end
+
+  defp socket_message(conn_pid, message) do
+    :gun.ws_send(conn_pid, {:text, message})
   end
 end
