@@ -31,6 +31,8 @@ defmodule StrawHat.Twitch.MixProject do
 
   defp deps do
     [
+      {:gun, "~> 1.3"},
+
       # Tools
       {:dialyxir, ">= 0.0.0", only: [:dev], runtime: false},
       {:credo, ">= 0.0.0", only: [:dev, :test], runtime: false},
