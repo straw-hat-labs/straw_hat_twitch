@@ -36,7 +36,7 @@ defmodule StrawHat.Twitch.Chat do
   end
 
   def depart_channel(session, channel_name) do
-    socket_message(session.conn_pid, Message.depart())
+    socket_message(session.conn_pid, Message.depart(channel_name))
 
     receive do
       {:gun_ws, _, _, frame} -> on_depart_channel(session, channel_name, frame)
@@ -47,7 +47,7 @@ defmodule StrawHat.Twitch.Chat do
   end
 
   defp on_depart_channel(session, channel_name, {:text, message}) do
-    if message == Message.on_depart(session, channel) do
+    if message == Message.on_depart(session, channel_name) do
       {:ok, session}
     else
       {:error, :depart_channel_failed}
