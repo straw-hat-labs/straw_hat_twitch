@@ -1,4 +1,4 @@
-defmodule StrawHat.Twitch.ChatTests do
+defmodule StrawHat.Twitch.Chat.MessageTests do
   use ExUnit.Case, async: true
 
   alias StrawHat.Twitch.Chat.Message
@@ -49,13 +49,11 @@ defmodule StrawHat.Twitch.ChatTests do
 
   test "parse join" do
     data = Message.parse_join(":alchemist_ubi!alchemist_ubi@alchemist_ubi.tmi.twitch.tv JOIN #alchemist_ubi\r\n")
-
     assert data == %{"channel_name" => "alchemist_ubi"}
   end
 
   test "parse part" do
     data = Message.parse_part(":alchemist_ubi!alchemist_ubi@alchemist_ubi.tmi.twitch.tv PART #alchemist_ubi\r\n")
-
     assert data == %{"channel_name" => "alchemist_ubi"}
   end
 end

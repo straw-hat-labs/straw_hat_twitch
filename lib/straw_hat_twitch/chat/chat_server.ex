@@ -40,7 +40,7 @@ defmodule StrawHat.Twitch.ChatServer do
   end
 
   def handle_cast({:send_message, channel_name, message}, state) do
-    state = Chat.send_channel_message(state, channel_name, message)
+    state = Chat.send_message(state, channel_name, message)
     {:noreply, state}
   end
 

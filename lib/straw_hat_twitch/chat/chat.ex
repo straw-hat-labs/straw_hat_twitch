@@ -20,12 +20,12 @@ defmodule StrawHat.Twitch.Chat do
     socket_message(state, Message.nick(state.credentials.username))
   end
 
-  def send_channel_message(state, channel_name, message) do
+  def send_message(state, channel_name, message) do
     socket_message(state, Message.message(channel_name, message))
   end
 
   def join_channel(state, channel_name) do
-    if Enum.member?(state.channels, channel_name) do
+    if State.has_channel?(state, channel_name) do
       state
     else
       socket_message(state, Message.join(channel_name))
@@ -33,7 +33,7 @@ defmodule StrawHat.Twitch.Chat do
   end
 
   def leave_channel(state, channel_name) do
-    if Enum.member?(state.channels, channel_name) do
+    if State.has_channel?(state, channel_name) do
       socket_message(state, Message.part(channel_name))
     else
       state
@@ -55,7 +55,7 @@ defmodule StrawHat.Twitch.Chat do
   end
 
   defp set_ready(state) do
-    Map.put(state, :is_ready, true)
+    State(state)
   end
 
   defp add_channel(state, message) do
@@ -63,8 +63,8 @@ defmodule StrawHat.Twitch.Chat do
       message
       |> Message.parse_join()
       |> Map.get("channel_name")
-    channels = [channel_name] ++ state.channels
-    Map.put(state, :channels, channels)
+
+    State.add_channel(state, channel_name)
   end
 
   defp remove_channel(state, message) do
@@ -72,8 +72,8 @@ defmodule StrawHat.Twitch.Chat do
       message
       |> Message.parse_part()
       |> Map.get("channel_name")
-    channels = List.delete(state.channels, channel_name)
-    Map.put(state, :channels, channels)
+
+    State.remove_channel(state, channel_name)
   end
 
   defp socket_message(state, message, opts \\ []) do
