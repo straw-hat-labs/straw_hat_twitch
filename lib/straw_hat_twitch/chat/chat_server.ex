@@ -25,7 +25,7 @@ defmodule StrawHat.Twitch.ChatServer do
 
   def handle_continue(:connect_socket, state) do
     {:ok, conn_pid} = Chat.connect()
-    state = Map.put(state, :conn_pid, conn_pid)
+    state = Chat.save_conn_pid(state, conn_pid)
     {:noreply, state}
   end
 

@@ -24,6 +24,10 @@ defmodule StrawHat.Twitch.Chat.State do
     Map.put(state, :is_ready, true)
   end
 
+  def save_conn_pid(state, conn_pid) do
+    Map.put(state, :conn_pid, conn_pid)
+  end
+
   def has_channel?(state, channel_name) do
     Enum.member?(state.channels, channel_name)
   end
