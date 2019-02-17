@@ -15,8 +15,12 @@ defmodule StrawHat.Twitch.Chat do
     :gun.close(session.conn_pid)
   end
 
-  def pong(conn_pid) do
+  def send_pong_message(conn_pid) do
     socket_message(conn_pid, Message.pong())
+  end
+
+  def send_channel_message(conn_pid, channel_name, message) do
+    socket_message(conn_pid, Message.message(channel_name, message))
   end
 
   defp upgrade_websocket(conn_pid) do
