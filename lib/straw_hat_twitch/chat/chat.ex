@@ -1,8 +1,7 @@
 defmodule StrawHat.Twitch.Chat do
-  alias StrawHat.Twitch.Chat.{Credentials, Message}
+  alias StrawHat.Twitch.Chat.{Message, State}
 
   @twitch_endpoint 'irc-ws.chat.twitch.tv'
-  @timeout 1000 * 60
 
   def connect do
     with {:ok, conn_pid} <- :gun.open(@twitch_endpoint, 443),
@@ -16,11 +15,11 @@ defmodule StrawHat.Twitch.Chat do
   end
 
   def save_conn_pid(state, conn_pid) do
-    State.save_conn_pid(state, pid)
+    State.save_conn_pid(state, conn_pid)
   end
 
   def authenticate(state) do
-    socket_message(state, Message.password(state.credentials.password), [filtered: true])
+    socket_message(state, Message.password(state.credentials.password), filtered: true)
     socket_message(state, Message.nick(state.credentials.username))
   end
 
@@ -59,7 +58,7 @@ defmodule StrawHat.Twitch.Chat do
   end
 
   defp set_ready(state) do
-    State(state)
+    State.ready(state)
   end
 
   defp add_channel(state, message) do
@@ -80,7 +79,7 @@ defmodule StrawHat.Twitch.Chat do
     State.remove_channel(state, channel_name)
   end
 
-  defp socket_message(state, message, opts \\ []) do
+  defp socket_message(state, message, _opts \\ []) do
     :gun.ws_send(state.conn_pid, {:text, message})
     state
   end

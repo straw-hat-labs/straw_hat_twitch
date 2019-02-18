@@ -24,7 +24,7 @@ defmodule StrawHat.Twitch.Chat.Message do
   end
 
   def welcome_message?(message) do
-    String.match?(message,  ~r/:tmi.twitch.tv 001 \S+ :Welcome, GLHF!\r\n/)
+    String.match?(message, ~r/:tmi.twitch.tv 001 \S+ :Welcome, GLHF!\r\n/)
   end
 
   def ping?(message) do
