@@ -1,6 +1,7 @@
 defmodule StrawHat.Twitch.StateTests do
   use ExUnit.Case, async: true
   alias StrawHat.Twitch.Chat.{State, Credentials}
+  alias StrawHat.Twitch.TestSupport.MessageBroker
 
   @credentials Credentials.new("alchemist_ubi", "123")
 
@@ -8,13 +9,19 @@ defmodule StrawHat.Twitch.StateTests do
     # I have no clue why my coverage is down even when I am doing this inside
     # my source code today, I just prefer to keep my coverage app, but, this is
     # innecessary, don't do this
-    assert %State{}
+    assert %State{
+      conn_pid: nil,
+      credentials: %{},
+      is_ready: false,
+      channels: [],
+      message_broker: __MODULE__
+    }
   end
 
   test "tracking a new channel" do
     state =
       @credentials
-      |> State.new()
+      |> State.new(MessageBroker)
       |> State.add_channel("alchemist_ubi")
 
     assert state.channels == ["alchemist_ubi"]
@@ -23,7 +30,7 @@ defmodule StrawHat.Twitch.StateTests do
   test "tracking a duplicated channel" do
     state =
       @credentials
-      |> State.new()
+      |> State.new(MessageBroker)
       |> State.add_channel("alchemist_ubi")
       |> State.add_channel("alchemist_ubi")
 
@@ -33,7 +40,7 @@ defmodule StrawHat.Twitch.StateTests do
   test "untracking a channel" do
     state =
       @credentials
-      |> State.new()
+      |> State.new(MessageBroker)
       |> State.add_channel("admiralbulldog")
       |> State.add_channel("alchemist_ubi")
       |> State.remove_channel("admiralbulldog")
@@ -44,7 +51,7 @@ defmodule StrawHat.Twitch.StateTests do
   test "untracking a non-existing channel" do
     state =
       @credentials
-      |> State.new()
+      |> State.new(MessageBroker)
       |> State.add_channel("admiralbulldog")
       |> State.add_channel("alchemist_ubi")
       |> State.remove_channel("gorgc")
@@ -55,7 +62,7 @@ defmodule StrawHat.Twitch.StateTests do
   test "mark as ready" do
     state =
       @credentials
-      |> State.new()
+      |> State.new(MessageBroker)
       |> State.ready()
 
     assert state.is_ready == true
@@ -64,7 +71,7 @@ defmodule StrawHat.Twitch.StateTests do
   test "saving Connection PID" do
     state =
       @credentials
-      |> State.new()
+      |> State.new(MessageBroker)
       |> State.save_conn_pid("123")
 
     assert state.conn_pid == "123"

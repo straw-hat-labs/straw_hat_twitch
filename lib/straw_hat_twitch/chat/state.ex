@@ -1,12 +1,14 @@
 defmodule StrawHat.Twitch.Chat.State do
-  defstruct [:credentials, :conn_pid, :is_ready, :channels]
+  @enforce_keys [:credentials, :conn_pid, :is_ready, :channels, :message_broker]
+  defstruct [:credentials, :conn_pid, :is_ready, :channels, :message_broker]
 
-  def new(credentials) do
+  def new(credentials, message_broker) do
     %__MODULE__{
       conn_pid: nil,
       credentials: credentials,
       is_ready: false,
-      channels: []
+      channels: [],
+      message_broker: message_broker
     }
   end
 
