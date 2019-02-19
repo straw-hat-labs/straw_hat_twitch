@@ -50,4 +50,8 @@ defmodule StrawHat.Twitch.Chat.Message do
   def parse_part(message) do
     Regex.named_captures(~r/PART #(?<channel_name>\S+)/, message)
   end
+
+  def parse_private_message(message) do
+    Regex.named_captures(~r/:(?<username>\S+)!\S+ PRIVMSG #(?<channel_name>\S+)+ :(?<message>[^\\\r]+)/, message)
+  end
 end
