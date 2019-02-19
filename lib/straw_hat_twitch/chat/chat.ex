@@ -23,8 +23,9 @@ defmodule StrawHat.Twitch.Chat do
   end
 
   def authenticate(state) do
-    socket_message(state, Message.password(state.credentials.password), filtered: true)
-    socket_message(state, Message.nick(state.credentials.username))
+    state
+    |> socket_message(Message.password(state.credentials.password), filtered: true)
+    |> socket_message(Message.nick(state.credentials.username))
   end
 
   def send_message(state, channel_name, message) do
