@@ -52,8 +52,8 @@ defmodule StrawHat.Twitch.Chat do
   end
 
   defp notify_message(state, message) do
-    data = Message.parse_private_message(message)
-    state.message_broker.publish(self(), message)
+    parsed_message = Message.parse_private_message(message)
+    state.message_broker.publish(self(), parsed_message)
     state
   end
 
