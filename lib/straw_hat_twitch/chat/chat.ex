@@ -32,19 +32,11 @@ defmodule StrawHat.Twitch.Chat do
   end
 
   def join_channel(state, channel_name) do
-    if State.has_channel?(state, channel_name) do
-      state
-    else
-      socket_message(state, Message.join(channel_name))
-    end
+    socket_message(state, Message.join(channel_name))
   end
 
   def leave_channel(state, channel_name) do
-    if State.has_channel?(state, channel_name) do
-      socket_message(state, Message.part(channel_name))
-    else
-      state
-    end
+    socket_message(state, Message.part(channel_name))
   end
 
   def handle_message(state, message) do
