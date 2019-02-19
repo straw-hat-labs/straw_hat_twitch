@@ -1,7 +1,6 @@
 defmodule StrawHat.Twitch.Chat.State do
   @moduledoc """
-  Chat's state, used to track current channels, `gun` connection PID, and other
-  useful information.
+  A chat's state.
   """
 
   alias StrawHat.Twitch.Chat.Credentials
@@ -13,7 +12,7 @@ defmodule StrawHat.Twitch.Chat.State do
   - `conn_pid`: `gun` connection PID.
   - `is_ready`: defines if the chat bot is ready to interact with.
   - `channels`: list of channels currently listen to.
-  - `message_broker`: Message Broker module used that gets notify private
+  - `message_broker`: message broker module used that gets notify the private
   messages.
   """
   @type t :: %__MODULE__{

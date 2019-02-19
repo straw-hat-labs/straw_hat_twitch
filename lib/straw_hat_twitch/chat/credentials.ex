@@ -7,11 +7,11 @@ defmodule StrawHat.Twitch.Chat.Credentials do
   defstruct [:password, :username]
 
   @typedoc """
-  - `username`: The account (username) that the chatbot uses to send chat
+  - `username`: the account (username) that the chatbot uses to send chat
   messages. This can be your Twitch account. Alternately, many developers
   choose to create a second Twitch account for their bot, so it's clear from
   whom the messages originate.
-  - `password`: The token to authenticate your chatbot with Twitch's servers.
+  - `password`: the token to authenticate your chatbot with Twitch's servers.
   Generate this with https://twitchapps.com/tmi/ (a Twitch community-driven
   wrapper around the Twitch API), while logged in to your chatbot account.
   The token will be an alphanumeric string.
