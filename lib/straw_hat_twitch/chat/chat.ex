@@ -3,8 +3,8 @@ defmodule StrawHat.Twitch.Chat do
 
   @twitch_endpoint 'irc-ws.chat.twitch.tv'
 
-  def connect do
-    with {:ok, conn_pid} <- :gun.open(@twitch_endpoint, 443),
+  def connect(endpoint \\ @twitch_endpoint) do
+    with {:ok, conn_pid} <- :gun.open(endpoint, 443),
          {:ok, _} = :gun.await_up(conn_pid),
          _ref = :gun.ws_upgrade(conn_pid, "/"),
          do: {:ok, conn_pid}
