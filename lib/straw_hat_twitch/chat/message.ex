@@ -1,4 +1,7 @@
 defmodule StrawHat.Twitch.Chat.Message do
+  @enforce_keys [:username, :channel_name, :body]
+  defstruct [:username, :channel_name, :body]
+
   def password(password) do
     "PASS #{password}"
   end
@@ -52,9 +55,15 @@ defmodule StrawHat.Twitch.Chat.Message do
   end
 
   def parse_private_message(message) do
-    Regex.named_captures(
+    parsed_message = Regex.named_captures(
       ~r/:(?<username>\S+)!\S+ PRIVMSG #(?<channel_name>\S+)+ :(?<message>[^\\\r]+)/,
       message
     )
+
+    %__MODULE__{
+      username: parsed_message["username"],
+      channel_name: parsed_message["channel_name"],
+      body: parsed_message["message"]
+    }
   end
 end
