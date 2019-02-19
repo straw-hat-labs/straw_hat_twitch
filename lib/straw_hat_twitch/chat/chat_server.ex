@@ -1,9 +1,8 @@
 defmodule StrawHat.Twitch.ChatServer do
   alias StrawHat.Twitch.Chat
-  alias StrawHat.Twitch.Chat.{Credentials, State}
 
-  def start_link(name, %Credentials{} = credentials) do
-    GenServer.start_link(__MODULE__, credentials, name: name)
+  def start_link(name, opts) do
+    GenServer.start_link(__MODULE__, opts, name: name)
   end
 
   def join_channel(pid, channel_name) do
@@ -18,8 +17,8 @@ defmodule StrawHat.Twitch.ChatServer do
     GenServer.cast(pid, {:send_message, channel_name, message})
   end
 
-  def init(credentials) do
-    state = Chat.initial_state(credentials)
+  def init(opts) do
+    state = Chat.initial_state(opts)
     {:ok, state, {:continue, :connect_socket}}
   end
 
