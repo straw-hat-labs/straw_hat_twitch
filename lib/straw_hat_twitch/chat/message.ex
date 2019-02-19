@@ -31,6 +31,10 @@ defmodule StrawHat.Twitch.Chat.Message do
     message == "PING :tmi.twitch.tv\r\n"
   end
 
+  def private_message?(message) do
+    String.match?(message, ~r/\S+ PRIVMSG #\S+/)
+  end
+
   def join?(message) do
     String.match?(message, ~r/\S+ JOIN #\S+/)
   end

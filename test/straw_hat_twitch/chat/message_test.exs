@@ -18,6 +18,11 @@ defmodule StrawHat.Twitch.Chat.MessageTests do
     assert Message.join?(message) == true
   end
 
+  test "matching private message" do
+    message = ":alchemist_ubi!alchemist_ubi@alchemist_ubi.tmi.twitch.tv PRIVMSG #alchemist_ubi :this is a message\r\n"
+    assert Message.private_message?(message) == true
+  end
+
   test "matching depart message" do
     message = ":alchemist_ubi!alchemist_ubi@alchemist_ubi.tmi.twitch.tv PART #alchemist_ubi\r\n"
     assert Message.part?(message) == true
