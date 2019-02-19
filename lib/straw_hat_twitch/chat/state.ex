@@ -11,13 +11,21 @@ defmodule StrawHat.Twitch.Chat.State do
   end
 
   def add_channel(state, channel_name) do
-    channels = [channel_name] ++ state.channels
-    Map.put(state, :channels, channels)
+    if has_channel?(state, channel_name) do
+      state
+    else
+      channels = [channel_name] ++ state.channels
+      Map.put(state, :channels, channels)
+    end
   end
 
   def remove_channel(state, channel_name) do
-    channels = List.delete(state.channels, channel_name)
-    Map.put(state, :channels, channels)
+    if has_channel?(state, channel_name) do
+      channels = List.delete(state.channels, channel_name)
+      Map.put(state, :channels, channels)
+    else
+      state
+    end
   end
 
   def ready(state) do
