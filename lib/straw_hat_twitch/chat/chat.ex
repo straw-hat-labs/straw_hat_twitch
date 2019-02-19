@@ -46,8 +46,15 @@ defmodule StrawHat.Twitch.Chat do
       Message.welcome_message?(message) -> set_ready(state)
       Message.join?(message) -> add_channel(state, message)
       Message.part?(message) -> remove_channel(state, message)
+      Message.private_message?(message) -> notify_message(state, message)
       true -> state
     end
+  end
+
+  defp notify_message(state, message) do
+    data = Message.parse_private_message(message)
+    state.message_broker.publish(self(), message)
+    state
   end
 
   defp send_pong_message(state) do
