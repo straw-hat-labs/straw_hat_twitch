@@ -78,10 +78,10 @@ defmodule StrawHat.Twitch.Chat.MessageTests do
         ":alchemist_ubi!alchemist_ubi@alchemist_ubi.tmi.twitch.tv PRIVMSG #alchemist_ubi :this is a message\r\n"
       )
 
-    assert data == %{
-             "channel_name" => "alchemist_ubi",
-             "username" => "alchemist_ubi",
-             "message" => "this is a message"
+    assert data == %Message{
+             channel_name: "alchemist_ubi",
+             username: "alchemist_ubi",
+             body: "this is a message"
            }
   end
 end
