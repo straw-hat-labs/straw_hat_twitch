@@ -32,18 +32,18 @@ defmodule StrawHat.Twitch.Chat.Message do
   end
 
   def join?(message) do
-    String.match?(message, ~r/\S+ JOIN #\S+\r\n/)
+    String.match?(message, ~r/\S+ JOIN #\S+/)
   end
 
   def part?(message) do
-    String.match?(message, ~r/\S+ PART #\S+\r\n/)
+    String.match?(message, ~r/\S+ PART #\S+/)
   end
 
   def parse_join(message) do
-    Regex.named_captures(~r/JOIN #(?<channel_name>\S+)\r\n/, message)
+    Regex.named_captures(~r/JOIN #(?<channel_name>\S+)/, message)
   end
 
   def parse_part(message) do
-    Regex.named_captures(~r/PART #(?<channel_name>\S+)\r\n/, message)
+    Regex.named_captures(~r/PART #(?<channel_name>\S+)/, message)
   end
 end
