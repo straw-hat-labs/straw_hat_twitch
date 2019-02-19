@@ -19,7 +19,7 @@ defmodule StrawHat.Twitch.ChatServer do
   end
 
   def init(credentials) do
-    state = State.new(credentials)
+    state = Chat.initial_state(credentials)
     {:ok, state, {:continue, :connect_socket}}
   end
 

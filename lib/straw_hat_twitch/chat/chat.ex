@@ -14,6 +14,10 @@ defmodule StrawHat.Twitch.Chat do
     :gun.close(state.conn_pid)
   end
 
+  def initial_state(credentials) do
+    State.new(credentials)
+  end
+
   def save_conn_pid(state, conn_pid) do
     State.save_conn_pid(state, conn_pid)
   end
