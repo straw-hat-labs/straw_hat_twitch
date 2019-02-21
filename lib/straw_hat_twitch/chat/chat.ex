@@ -1,4 +1,6 @@
 defmodule StrawHat.Twitch.Chat do
+  @moduledoc false
+
   alias StrawHat.Twitch.Chat.{Message, State}
 
   def connect(state) do

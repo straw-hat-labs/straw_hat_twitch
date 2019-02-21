@@ -4,6 +4,11 @@ defmodule StrawHat.Twitch.ChatServer do
 
   @type chat_server_pid :: pid()
 
+  @typedoc """
+  - `credentials`: the credentials for authenticate the bot.
+  - `message_broker`: module that implements `StrawHat.Twitch.Chat.MessageBroker`.
+  - `host`: Twitch Chat server host.
+  """
   @type opts :: %{
     credentials: %Credentials{},
     message_broker: module(),
