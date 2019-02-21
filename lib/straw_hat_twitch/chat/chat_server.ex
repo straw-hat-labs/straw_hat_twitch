@@ -37,10 +37,10 @@ defmodule StrawHat.Twitch.ChatServer do
   - `host`: Twitch Chat server host.
   """
   @type opts :: %{
-    credentials: %Credentials{},
-    message_broker: module(),
-    host: binary()
-  }
+          credentials: %Credentials{},
+          message_broker: module(),
+          host: binary()
+        }
 
   @doc """
   Starts a new Chat server.

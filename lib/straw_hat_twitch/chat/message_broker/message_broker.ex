@@ -22,5 +22,5 @@ defmodule StrawHat.Twitch.Chat.MessageBroker do
         end
       end
   """
-  @callback publish(caller :: pid, message :: StrawHat.Twitch.Chat.Message.t) :: no_return
+  @callback publish(caller :: pid, message :: StrawHat.Twitch.Chat.Message.t()) :: no_return
 end
