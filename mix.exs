@@ -37,6 +37,9 @@ defmodule StrawHat.Twitch.MixProject do
     [
       {:gun, "~> 1.3"},
 
+      # Testing
+      {:mock, "~> 0.3.3"},
+
       # Tools
       {:dialyxir, ">= 0.0.0", only: [:dev], runtime: false},
       {:credo, ">= 0.0.0", only: [:dev, :test], runtime: false},
