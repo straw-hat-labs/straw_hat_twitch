@@ -1,18 +1,43 @@
 defmodule StrawHat.Twitch.ChatServer do
   alias StrawHat.Twitch.Chat
+  alias StrawHat.Twitch.Chat.Credentials
 
+  @type chat_server_pid :: pid()
+
+  @type opts :: %{
+    credentials: %Credentials{},
+    message_broker: module(),
+    host: binary()
+  }
+
+  @doc """
+  Starts a new Chat server.
+  """
+  @spec start_link(chat_server_pid, opts) :: {:ok, pid}
   def start_link(name, opts) do
     GenServer.start_link(__MODULE__, opts, name: name)
   end
 
+  @doc """
+  Subscribe to a channel, listening for incoming messages.
+  """
+  @spec join_channel(chat_server_pid, String.t()) :: :ok
   def join_channel(pid, channel_name) do
     GenServer.cast(pid, {:join_channel, channel_name})
   end
 
+  @doc """
+  Unsubscribe from a channel.
+  """
+  @spec leave_channel(chat_server_pid, String.t()) :: :ok
   def leave_channel(pid, channel_name) do
     GenServer.cast(pid, {:leave_channel, channel_name})
   end
 
+  @doc """
+  Send a message to a channel.
+  """
+  @spec send_message(chat_server_pid, String.t(), String.t()) :: :ok
   def send_message(pid, channel_name, message) do
     GenServer.cast(pid, {:send_message, channel_name, message})
   end
