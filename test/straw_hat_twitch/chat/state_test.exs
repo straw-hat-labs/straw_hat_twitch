@@ -5,6 +5,11 @@ defmodule StrawHat.Twitch.StateTests do
 
   @credentials Credentials.new("alchemist_ubi", "123")
 
+  @default_state State.new(%{
+                   credentials: @credentials,
+                   message_broker: MessageBroker
+                 })
+
   test "creating a State struct" do
     # I have no clue why my coverage is down even when I am doing this inside
     # my source code today, I just prefer to keep my coverage app, but, this is
@@ -14,23 +19,20 @@ defmodule StrawHat.Twitch.StateTests do
       credentials: %{},
       is_ready: false,
       channels: [],
-      message_broker: __MODULE__
+      message_broker: __MODULE__,
+      host: 'something'
     }
   end
 
   test "tracking a new channel" do
-    state =
-      @credentials
-      |> State.new(MessageBroker)
-      |> State.add_channel("alchemist_ubi")
+    state = State.add_channel(@default_state, "alchemist_ubi")
 
     assert state.channels == ["alchemist_ubi"]
   end
 
   test "tracking a duplicated channel" do
     state =
-      @credentials
-      |> State.new(MessageBroker)
+      @default_state
       |> State.add_channel("alchemist_ubi")
       |> State.add_channel("alchemist_ubi")
 
@@ -39,8 +41,7 @@ defmodule StrawHat.Twitch.StateTests do
 
   test "untracking a channel" do
     state =
-      @credentials
-      |> State.new(MessageBroker)
+      @default_state
       |> State.add_channel("admiralbulldog")
       |> State.add_channel("alchemist_ubi")
       |> State.remove_channel("admiralbulldog")
@@ -50,8 +51,7 @@ defmodule StrawHat.Twitch.StateTests do
 
   test "untracking a non-existing channel" do
     state =
-      @credentials
-      |> State.new(MessageBroker)
+      @default_state
       |> State.add_channel("admiralbulldog")
       |> State.add_channel("alchemist_ubi")
       |> State.remove_channel("gorgc")
@@ -60,19 +60,13 @@ defmodule StrawHat.Twitch.StateTests do
   end
 
   test "mark as ready" do
-    state =
-      @credentials
-      |> State.new(MessageBroker)
-      |> State.ready()
+    state = State.ready(@default_state)
 
     assert state.is_ready == true
   end
 
   test "saving Connection PID" do
-    state =
-      @credentials
-      |> State.new(MessageBroker)
-      |> State.save_conn_pid("123")
+    state = State.save_conn_pid(@default_state, "123")
 
     assert state.conn_pid == "123"
   end

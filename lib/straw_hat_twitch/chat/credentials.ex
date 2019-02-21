@@ -17,9 +17,9 @@ defmodule StrawHat.Twitch.Chat.Credentials do
   The token will be an alphanumeric string.
   """
   @type t :: %__MODULE__{
-    username: String.t(),
-    password: String.t()
-  }
+          username: String.t(),
+          password: String.t()
+        }
 
   @doc """
   Returns new credentials.

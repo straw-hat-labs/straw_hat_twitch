@@ -1,10 +1,8 @@
 defmodule StrawHat.Twitch.Chat do
   alias StrawHat.Twitch.Chat.{Message, State}
 
-  @twitch_endpoint 'irc-ws.chat.twitch.tv'
-
-  def connect(endpoint \\ @twitch_endpoint) do
-    with {:ok, conn_pid} <- :gun.open(endpoint, 443),
+  def connect(state) do
+    with {:ok, conn_pid} <- :gun.open(state.host, 443),
          {:ok, _} = :gun.await_up(conn_pid),
          _ref = :gun.ws_upgrade(conn_pid, "/"),
          do: {:ok, conn_pid}
@@ -15,7 +13,7 @@ defmodule StrawHat.Twitch.Chat do
   end
 
   def initial_state(opts) do
-    State.new(opts.credentials, opts.message_broker)
+    State.new(opts)
   end
 
   def save_conn_pid(state, conn_pid) do

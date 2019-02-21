@@ -5,8 +5,10 @@ defmodule StrawHat.Twitch.Chat.State do
 
   alias StrawHat.Twitch.Chat.Credentials
 
-  @enforce_keys [:credentials, :conn_pid, :is_ready, :channels, :message_broker]
-  defstruct [:credentials, :conn_pid, :is_ready, :channels, :message_broker]
+  @enforce_keys [:credentials, :conn_pid, :is_ready, :channels, :message_broker, :host]
+  defstruct [:credentials, :conn_pid, :is_ready, :channels, :message_broker, :host]
+
+  @default_endpoint 'irc-ws.chat.twitch.tv'
 
   @typedoc """
   - `conn_pid`: `gun` connection PID.
@@ -16,21 +18,23 @@ defmodule StrawHat.Twitch.Chat.State do
   messages.
   """
   @type t :: %__MODULE__{
-    conn_pid: pid() | nil,
-    credentials: %Credentials{},
-    is_ready: boolean(),
-    channels: [String.t()],
-    message_broker: module()
-  }
+          conn_pid: pid() | nil,
+          credentials: %Credentials{},
+          is_ready: boolean(),
+          channels: [String.t()],
+          message_broker: module(),
+          host: binary()
+        }
 
   @doc false
-  def new(%Credentials{} = credentials, message_broker) do
+  def new(opts) do
     %__MODULE__{
       conn_pid: nil,
-      credentials: credentials,
+      credentials: opts.credentials,
       is_ready: false,
       channels: [],
-      message_broker: message_broker
+      message_broker: opts.message_broker,
+      host: Map.get(opts, :host, @default_endpoint)
     }
   end
 

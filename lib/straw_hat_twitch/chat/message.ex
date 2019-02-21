@@ -12,10 +12,10 @@ defmodule StrawHat.Twitch.Chat.Message do
   - `body`: the message body.
   """
   @type t :: %__MODULE__{
-    username: String.t(),
-    channel_name: String.t(),
-    body: String.t()
-  }
+          username: String.t(),
+          channel_name: String.t(),
+          body: String.t()
+        }
 
   @doc false
   def password(password) do
@@ -84,10 +84,11 @@ defmodule StrawHat.Twitch.Chat.Message do
 
   @doc false
   def parse_private_message(message) do
-    parsed_message = Regex.named_captures(
-      ~r/:(?<username>\S+)!\S+ PRIVMSG #(?<channel_name>\S+)+ :(?<message>[^\\\r]+)/,
-      message
-    )
+    parsed_message =
+      Regex.named_captures(
+        ~r/:(?<username>\S+)!\S+ PRIVMSG #(?<channel_name>\S+)+ :(?<message>[^\\\r]+)/,
+        message
+      )
 
     %__MODULE__{
       username: parsed_message["username"],
