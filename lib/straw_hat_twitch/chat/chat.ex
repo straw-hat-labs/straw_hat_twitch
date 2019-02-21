@@ -7,7 +7,7 @@ defmodule StrawHat.Twitch.Chat do
     with {:ok, conn_pid} <- :gun.open(state.host, 443),
          {:ok, _} = :gun.await_up(conn_pid),
          _ref = :gun.ws_upgrade(conn_pid, "/"),
-         do: Chat.save_conn_pid(state, conn_pid)
+         do: State.save_conn_pid(state, conn_pid)
   end
 
   def disconnect(state) do
@@ -16,10 +16,6 @@ defmodule StrawHat.Twitch.Chat do
 
   def initial_state(opts) do
     State.new(opts)
-  end
-
-  def save_conn_pid(state, conn_pid) do
-    State.save_conn_pid(state, conn_pid)
   end
 
   def authenticate(state) do
