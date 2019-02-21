@@ -1,3 +1,3 @@
 defmodule StrawHat.Twitch.Chat.MessageBroker do
-  @callback publish(pid, %StrawHat.Twitch.Chat.Message{}) :: :no_return
+  @callback publish(caller :: pid, message :: StrawHat.Twitch.Chat.Message.t) :: no_return
 end

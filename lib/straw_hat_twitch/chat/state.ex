@@ -16,6 +16,7 @@ defmodule StrawHat.Twitch.Chat.State do
   - `channels`: list of channels currently listen to.
   - `message_broker`: message broker module used that gets notify the private
   messages.
+  - `host`: Twitch server host.
   """
   @type t :: %__MODULE__{
           conn_pid: pid() | nil,
