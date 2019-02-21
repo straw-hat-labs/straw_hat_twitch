@@ -1,4 +1,28 @@
 defmodule StrawHat.Twitch.ChatServer do
+  @moduledoc """
+  A GenServer that subscribes to Twitch Chat using Websocket.
+
+      password = System.get_env("TWITCH_CHAT_PASSWORD")
+      credentials = Credentials.new("my_twitch_channel", password)
+      {:ok, pid} =
+        StrawHat.Twitch.ChatServer.start_link(:my_channel, %{
+          credentials: credentials,
+          message_broker: StrawHat.Twitch.Chat.EchoMessageBroker
+        }))
+
+  Using the `pid` you can send messages to ohter channels
+
+      StrawHat.Twitch.ChatServer.send_message(pid, "alchemist_ubi", "Hello, World")
+
+  Now you can subscribe to a channel chat's thread.
+
+      StrawHat.Twitch.ChatServer.join_channel(pid, "alchemist_ubi")
+
+  Or unsubscribe from a channel chat's thread
+
+      StrawHat.Twitch.ChatServer.leave_channel(pid, "alchemist_ubi")
+  """
+
   alias StrawHat.Twitch.Chat
   alias StrawHat.Twitch.Chat.Credentials
 
