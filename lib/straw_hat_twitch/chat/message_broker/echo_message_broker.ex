@@ -6,8 +6,6 @@ defmodule StrawHat.Twitch.Chat.EchoMessageBroker do
 
   @impl StrawHat.Twitch.Chat.MessageBroker
   def publish(caller, message) do
-    Task.async(fn ->
-      StrawHat.Twitch.ChatServer.send_message(caller, message.channel_name, message.body)
-    end)
+    StrawHat.Twitch.ChatServer.send_message(caller, message.channel_name, message.body)
   end
 end
