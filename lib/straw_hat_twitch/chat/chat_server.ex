@@ -2,6 +2,9 @@ defmodule StrawHat.Twitch.ChatServer do
   alias StrawHat.Twitch.Chat
   alias StrawHat.Twitch.Chat.Credentials
 
+  @typedoc """
+  Indentifier of the chat genserver.
+  """
   @type chat_server_pid :: pid()
 
   @typedoc """
