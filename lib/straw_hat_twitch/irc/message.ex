@@ -24,6 +24,7 @@ defmodule StrawHat.Twitch.IRC.Message do
 
   @doc false
   def nick(username) do
+    username = String.downcase(username)
     "NICK #{username}"
   end
 
