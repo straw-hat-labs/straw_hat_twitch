@@ -1,13 +1,13 @@
-defmodule StrawHat.Twitch.Chat do
+defmodule StrawHat.Twitch.IRC.Client do
   @moduledoc false
 
-  alias StrawHat.Twitch.Chat.{Message, State}
+  alias StrawHat.Twitch.IRC.{Message, ClientState}
 
   def connect(state) do
     with {:ok, conn_pid} <- :gun.open(state.host, 443),
          {:ok, _} = :gun.await_up(conn_pid),
          _ref = :gun.ws_upgrade(conn_pid, "/"),
-         do: State.save_conn_pid(state, conn_pid)
+         do: ClientState.save_conn_pid(state, conn_pid)
   end
 
   def disconnect(state) do
@@ -15,7 +15,7 @@ defmodule StrawHat.Twitch.Chat do
   end
 
   def initial_state(opts) do
-    State.new(opts)
+    ClientState.new(opts)
   end
 
   def authenticate(state) do
@@ -63,7 +63,7 @@ defmodule StrawHat.Twitch.Chat do
   end
 
   defp set_ready(state) do
-    State.ready(state)
+    ClientState.ready(state)
   end
 
   defp add_channel(state, message) do
@@ -72,7 +72,7 @@ defmodule StrawHat.Twitch.Chat do
       |> Message.parse_join()
       |> Map.get("channel_name")
 
-    State.add_channel(state, channel_name)
+    ClientState.add_channel(state, channel_name)
   end
 
   defp remove_channel(state, message) do
@@ -81,7 +81,7 @@ defmodule StrawHat.Twitch.Chat do
       |> Message.parse_part()
       |> Map.get("channel_name")
 
-    State.remove_channel(state, channel_name)
+    ClientState.remove_channel(state, channel_name)
   end
 
   defp socket_message(state, message, _opts \\ []) do

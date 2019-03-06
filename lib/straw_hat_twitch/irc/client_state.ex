@@ -1,9 +1,9 @@
-defmodule StrawHat.Twitch.Chat.State do
+defmodule StrawHat.Twitch.IRC.ClientState do
   @moduledoc """
-  A chat's state.
+  A IRC client state.
   """
 
-  alias StrawHat.Twitch.Chat.Credentials
+  alias StrawHat.Twitch.IRC.Credentials
 
   @enforce_keys [:credentials, :conn_pid, :is_ready, :channels, :message_broker, :host]
   defstruct [:credentials, :conn_pid, :is_ready, :channels, :message_broker, :host]
@@ -12,7 +12,7 @@ defmodule StrawHat.Twitch.Chat.State do
 
   @typedoc """
   - `conn_pid`: `gun` connection PID.
-  - `is_ready`: defines if the chat bot is ready to interact with.
+  - `is_ready`: defines if the chatbot is ready to interact with.
   - `channels`: list of channels currently listen to.
   - `message_broker`: message broker module used that gets notify the private
   messages.

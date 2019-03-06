@@ -1,30 +1,29 @@
-defmodule StrawHat.Twitch.ChatServer do
+defmodule StrawHat.Twitch.IRCServer do
   @moduledoc """
   A GenServer that subscribes to Twitch Chat using Websocket.
 
       password = System.get_env("TWITCH_CHAT_PASSWORD")
-      credentials = Credentials.new("my_twitch_channel", password)
+      credentials = StrawHat.Twitch.IRC.Credentials.new("my_twitch_channel", password)
       {:ok, pid} =
-        StrawHat.Twitch.ChatServer.start_link(:my_channel, %{
+        StrawHat.Twitch.IRCServer.start_link(:my_channel, %{
           credentials: credentials,
-          message_broker: StrawHat.Twitch.Chat.EchoMessageBroker
-        }))
+          message_broker: StrawHat.Twitch.IRC.EchoMessageBroker
+        })
 
   Using the `pid` you can send messages to ohter channels
 
-      StrawHat.Twitch.ChatServer.send_message(pid, "alchemist_ubi", "Hello, World")
+      StrawHat.Twitch.IRCServer.send_message(pid, "alchemist_ubi", "Hello, World")
 
   Now you can subscribe to a channel chat's thread.
 
-      StrawHat.Twitch.ChatServer.join_channel(pid, "alchemist_ubi")
+      StrawHat.Twitch.IRCServer.join_channel(pid, "alchemist_ubi")
 
   Or unsubscribe from a channel chat's thread
 
-      StrawHat.Twitch.ChatServer.leave_channel(pid, "alchemist_ubi")
+      StrawHat.Twitch.IRCServer.leave_channel(pid, "alchemist_ubi")
   """
 
-  alias StrawHat.Twitch.Chat
-  alias StrawHat.Twitch.Chat.Credentials
+  alias StrawHat.Twitch.IRC.{Client, Credentials}
 
   @typedoc """
   Indentifier of the chat genserver.
@@ -33,7 +32,7 @@ defmodule StrawHat.Twitch.ChatServer do
 
   @typedoc """
   - `credentials`: the credentials for authenticate the bot.
-  - `message_broker`: module that implements `StrawHat.Twitch.Chat.MessageBroker`.
+  - `message_broker`: module that implements `StrawHat.Twitch.IRC.MessageBroker`.
   - `host`: Twitch Chat server host.
   """
   @type opts :: %{
@@ -76,43 +75,43 @@ defmodule StrawHat.Twitch.ChatServer do
 
   @doc false
   def init(opts) do
-    state = Chat.initial_state(opts)
+    state = Client.initial_state(opts)
     {:ok, state, {:continue, :connect_socket}}
   end
 
   @doc false
   def handle_continue(:connect_socket, state) do
-    state = Chat.connect(state)
+    state = Client.connect(state)
     {:noreply, state}
   end
 
   @doc false
   def handle_cast({:join_channel, channel_name}, state) do
-    state = Chat.join_channel(state, channel_name)
+    state = Client.join_channel(state, channel_name)
     {:noreply, state}
   end
 
   @doc false
   def handle_cast({:leave_channel, channel_name}, state) do
-    state = Chat.leave_channel(state, channel_name)
+    state = Client.leave_channel(state, channel_name)
     {:noreply, state}
   end
 
   @doc false
   def handle_cast({:send_message, channel_name, message}, state) do
-    state = Chat.send_message(state, channel_name, message)
+    state = Client.send_message(state, channel_name, message)
     {:noreply, state}
   end
 
   @doc false
   def handle_info({:gun_upgrade, _, _, [<<"websocket">>], _}, state) do
-    state = Chat.authenticate(state)
+    state = Client.authenticate(state)
     {:noreply, state}
   end
 
   @doc false
   def handle_info({:gun_ws, _, _, {:text, message}}, state) do
-    state = Chat.handle_message(state, message)
+    state = Client.handle_message(state, message)
     {:noreply, state}
   end
 

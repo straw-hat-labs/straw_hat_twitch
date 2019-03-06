@@ -1,4 +1,4 @@
-defmodule StrawHat.Twitch.Chat.MessageBroker do
+defmodule StrawHat.Twitch.IRC.MessageBroker do
   @moduledoc """
   Message Brokers are used for listening to new messages coming from Twitch chat.
   This allow you to transform or do some async actions on the message.
@@ -13,14 +13,14 @@ defmodule StrawHat.Twitch.Chat.MessageBroker do
   For example, the following message broker echos the message back:
 
       defmodule EchoMessageBroker do
-        @behaviour StrawHat.Twitch.Chat.MessageBroker
+        @behaviour StrawHat.Twitch.IRC.MessageBroker
 
-        @impl StrawHat.Twitch.Chat.MessageBroker
+        @impl StrawHat.Twitch.IRC.MessageBroker
         def publish(caller, message) do
           # Notice how we use `caller` to send a message back to the GenServer.
           StrawHat.Twitch.ChatServer.send_message(caller, message.channel_name, message.body)
         end
       end
   """
-  @callback publish(caller :: pid, message :: StrawHat.Twitch.Chat.Message.t()) :: no_return
+  @callback publish(caller :: pid, message :: StrawHat.Twitch.IRC.Message.t()) :: no_return
 end

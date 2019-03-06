@@ -1,4 +1,4 @@
-defmodule StrawHat.Twitch.Chat.Credentials do
+defmodule StrawHat.Twitch.IRC.Credentials do
   @moduledoc """
   Twitch Chat credentials used for authenticating the bot.
   """

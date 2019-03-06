@@ -1,6 +1,6 @@
-defmodule StrawHat.Twitch.Chat.Message do
+defmodule StrawHat.Twitch.IRC.Message do
   @moduledoc """
-  A chat's message.
+  A IRC message.
   """
 
   @enforce_keys [:username, :channel_name, :body]
