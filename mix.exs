@@ -93,12 +93,12 @@ defmodule StrawHat.Twitch.MixProject do
           StrawHat.Twitch.IRC.Server,
           StrawHat.Twitch.IRC.Client,
           StrawHat.Twitch.IRC.ClientState,
-          StrawHat.Twitch.IRC.Message,
+          StrawHat.Twitch.IRC.Message
         ],
         "Message Brokers": [
           StrawHat.Twitch.IRC.MessageBroker,
-          StrawHat.Twitch.IRC.MessageBroker.Echo,
-        ],
+          StrawHat.Twitch.IRC.MessageBroker.Echo
+        ]
       ]
     ]
   end
