@@ -7,7 +7,7 @@ defmodule StrawHat.Twitch.IRC.Server do
       {:ok, pid} =
         StrawHat.Twitch.IRC.Server.start_link(:my_channel, %{
           credentials: credentials,
-          message_broker: StrawHat.Twitch.IRC.EchoMessageBroker
+          message_broker: StrawHat.Twitch.IRC.MessageBroker.Echo
         })
 
   Using the `pid` you can send messages to ohter channels

@@ -1,4 +1,4 @@
-defmodule StrawHat.Twitch.IRC.EchoMessageBroker do
+defmodule StrawHat.Twitch.IRC.MessageBroker.Echo do
   @moduledoc """
   Echos the new messages back to the channel that receive the message.
   """
