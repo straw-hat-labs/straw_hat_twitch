@@ -4,8 +4,10 @@ defmodule StrawHat.Twitch.IRC.EchoMessageBroker do
   """
   @behaviour StrawHat.Twitch.IRC.MessageBroker
 
+  alias StrawHat.Twitch.IRC.Server
+
   @impl StrawHat.Twitch.IRC.MessageBroker
   def publish(caller, message) do
-    StrawHat.Twitch.IRCServer.send_message(caller, message.channel_name, message.body)
+    Server.send_message(caller, message.channel_name, message.body)
   end
 end

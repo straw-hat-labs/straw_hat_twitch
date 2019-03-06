@@ -1,26 +1,26 @@
-defmodule StrawHat.Twitch.IRCServer do
+defmodule StrawHat.Twitch.IRC.Server do
   @moduledoc """
-  A GenServer that subscribes to Twitch Chat using Websocket.
+  A GenServer that that uses a IRC Client.
 
       password = System.get_env("TWITCH_CHAT_PASSWORD")
       credentials = StrawHat.Twitch.IRC.Credentials.new("my_twitch_channel", password)
       {:ok, pid} =
-        StrawHat.Twitch.IRCServer.start_link(:my_channel, %{
+        StrawHat.Twitch.IRC.Server.start_link(:my_channel, %{
           credentials: credentials,
           message_broker: StrawHat.Twitch.IRC.EchoMessageBroker
         })
 
   Using the `pid` you can send messages to ohter channels
 
-      StrawHat.Twitch.IRCServer.send_message(pid, "alchemist_ubi", "Hello, World")
+      StrawHat.Twitch.IRC.Server.send_message(pid, "alchemist_ubi", "Hello, World")
 
   Now you can subscribe to a channel chat's thread.
 
-      StrawHat.Twitch.IRCServer.join_channel(pid, "alchemist_ubi")
+      StrawHat.Twitch.IRC.Server.join_channel(pid, "alchemist_ubi")
 
   Or unsubscribe from a channel chat's thread
 
-      StrawHat.Twitch.IRCServer.leave_channel(pid, "alchemist_ubi")
+      StrawHat.Twitch.IRC.Server.leave_channel(pid, "alchemist_ubi")
   """
 
   alias StrawHat.Twitch.IRC.{Client, Credentials}
