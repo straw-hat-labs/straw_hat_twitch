@@ -86,7 +86,20 @@ defmodule StrawHat.Twitch.MixProject do
       homepage_url: @source_url,
       source_ref: "v#{@version}",
       source_url: @source_url,
-      extras: ["README.md"]
+      extras: ["README.md"],
+      groups_for_modules: [
+        "Chatbots & IRC": [
+          StrawHat.Twitch.IRC.Credentials,
+          StrawHat.Twitch.IRC.Server,
+          StrawHat.Twitch.IRC.Client,
+          StrawHat.Twitch.IRC.ClientState,
+          StrawHat.Twitch.IRC.Message,
+        ],
+        "Message Brokers": [
+          StrawHat.Twitch.IRC.MessageBroker,
+          StrawHat.Twitch.IRC.MessageBroker.Echo,
+        ],
+      ]
     ]
   end
 end
