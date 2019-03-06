@@ -1,11 +1,11 @@
-defmodule StrawHat.Twitch.EchoMessageBrokerTests do
+defmodule StrawHat.Twitch.MessageBroker.EchoTest do
   use ExUnit.Case, async: true
 
-  alias StrawHat.Twitch.Chat.Message
-  alias StrawHat.Twitch.Chat.EchoMessageBroker
+  alias StrawHat.Twitch.IRC.Message
+  alias StrawHat.Twitch.IRC.MessageBroker.Echo
 
   test "echoing the message back to the chat server" do
-    EchoMessageBroker.publish(self(), %Message{
+    Echo.publish(self(), %Message{
       channel_name: "alchemist_ubi",
       username: "alchemist_ubi",
       body: "Hello, World"

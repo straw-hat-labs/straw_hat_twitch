@@ -1,7 +1,7 @@
-defmodule StrawHat.Twitch.Chat.MessageTests do
+defmodule StrawHat.Twitch.IRC.MessageTest do
   use ExUnit.Case, async: true
 
-  alias StrawHat.Twitch.Chat.Message
+  alias StrawHat.Twitch.IRC.Message
 
   test "matching welcome message" do
     message = ":tmi.twitch.tv 001 alchemist_ubi :Welcome, GLHF!\r\n"

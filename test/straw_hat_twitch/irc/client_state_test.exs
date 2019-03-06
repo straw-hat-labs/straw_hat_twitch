@@ -1,20 +1,20 @@
-defmodule StrawHat.Twitch.StateTests do
+defmodule StrawHat.Twitch.IRC.ClientStateTest do
   use ExUnit.Case, async: true
-  alias StrawHat.Twitch.Chat.{State, Credentials}
+  alias StrawHat.Twitch.IRC.{ClientState, Credentials}
   alias StrawHat.Twitch.TestSupport.MessageBroker
 
   @credentials Credentials.new("alchemist_ubi", "123")
 
-  @default_state State.new(%{
+  @default_state ClientState.new(%{
                    credentials: @credentials,
                    message_broker: MessageBroker
                  })
 
-  test "creating a State struct" do
+  test "creating a IRC client struct" do
     # I have no clue why my coverage is down even when I am doing this inside
     # my source code today, I just prefer to keep my coverage app, but, this is
     # innecessary, don't do this
-    assert %State{
+    assert %ClientState{
       conn_pid: nil,
       credentials: %{},
       is_ready: false,
@@ -25,7 +25,7 @@ defmodule StrawHat.Twitch.StateTests do
   end
 
   test "tracking a new channel" do
-    state = State.add_channel(@default_state, "alchemist_ubi")
+    state = ClientState.add_channel(@default_state, "alchemist_ubi")
 
     assert state.channels == ["alchemist_ubi"]
   end
@@ -33,8 +33,8 @@ defmodule StrawHat.Twitch.StateTests do
   test "tracking a duplicated channel" do
     state =
       @default_state
-      |> State.add_channel("alchemist_ubi")
-      |> State.add_channel("alchemist_ubi")
+      |> ClientState.add_channel("alchemist_ubi")
+      |> ClientState.add_channel("alchemist_ubi")
 
     assert state.channels == ["alchemist_ubi"]
   end
@@ -42,9 +42,9 @@ defmodule StrawHat.Twitch.StateTests do
   test "untracking a channel" do
     state =
       @default_state
-      |> State.add_channel("admiralbulldog")
-      |> State.add_channel("alchemist_ubi")
-      |> State.remove_channel("admiralbulldog")
+      |> ClientState.add_channel("admiralbulldog")
+      |> ClientState.add_channel("alchemist_ubi")
+      |> ClientState.remove_channel("admiralbulldog")
 
     assert state.channels == ["alchemist_ubi"]
   end
@@ -52,21 +52,21 @@ defmodule StrawHat.Twitch.StateTests do
   test "untracking a non-existing channel" do
     state =
       @default_state
-      |> State.add_channel("admiralbulldog")
-      |> State.add_channel("alchemist_ubi")
-      |> State.remove_channel("gorgc")
+      |> ClientState.add_channel("admiralbulldog")
+      |> ClientState.add_channel("alchemist_ubi")
+      |> ClientState.remove_channel("gorgc")
 
     assert state.channels == ["alchemist_ubi", "admiralbulldog"]
   end
 
   test "mark as ready" do
-    state = State.ready(@default_state)
+    state = ClientState.ready(@default_state)
 
     assert state.is_ready == true
   end
 
   test "saving Connection PID" do
-    state = State.save_conn_pid(@default_state, "123")
+    state = ClientState.save_conn_pid(@default_state, "123")
 
     assert state.conn_pid == "123"
   end

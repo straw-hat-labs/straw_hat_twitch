@@ -1,6 +1,6 @@
-defmodule StrawHat.Twitch.CredentialsTests do
+defmodule StrawHat.Twitch.IRC.CredentialsTest do
   use ExUnit.Case, async: true
-  alias StrawHat.Twitch.Chat.Credentials
+  alias StrawHat.Twitch.IRC.Credentials
 
   test "creating a Credentials struct" do
     # I have no clue why my coverage is down even when I am doing this inside
