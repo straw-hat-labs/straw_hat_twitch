@@ -1,6 +1,6 @@
 defmodule StrawHat.Twitch.IRC.Server do
   @moduledoc """
-  A GenServer that that uses a IRC Client.
+  A IRC client.
 
       password = System.get_env("TWITCH_CHAT_PASSWORD")
       credentials = StrawHat.Twitch.IRC.Credentials.new("my_twitch_channel", password)
@@ -26,9 +26,9 @@ defmodule StrawHat.Twitch.IRC.Server do
   alias StrawHat.Twitch.IRC.{Client, Credentials}
 
   @typedoc """
-  Indentifier of the chat genserver.
+  Indentifier of the IRC genserver client.
   """
-  @type chat_server_pid :: pid()
+  @type server_pid :: pid()
 
   @typedoc """
   - `credentials`: the credentials for authenticate the bot.
@@ -44,7 +44,7 @@ defmodule StrawHat.Twitch.IRC.Server do
   @doc """
   Starts a new Chat server.
   """
-  @spec start_link(chat_server_pid, opts) :: {:ok, pid}
+  @spec start_link(server_pid, opts) :: {:ok, pid}
   def start_link(name, opts) do
     GenServer.start_link(__MODULE__, opts, name: name)
   end
@@ -52,7 +52,7 @@ defmodule StrawHat.Twitch.IRC.Server do
   @doc """
   Subscribe to a channel, listening for incoming messages.
   """
-  @spec join_channel(chat_server_pid, String.t()) :: :ok
+  @spec join_channel(server_pid, String.t()) :: :ok
   def join_channel(pid, channel_name) do
     GenServer.cast(pid, {:join_channel, channel_name})
   end
@@ -60,7 +60,7 @@ defmodule StrawHat.Twitch.IRC.Server do
   @doc """
   Unsubscribe from a channel.
   """
-  @spec leave_channel(chat_server_pid, String.t()) :: :ok
+  @spec leave_channel(server_pid, String.t()) :: :ok
   def leave_channel(pid, channel_name) do
     GenServer.cast(pid, {:leave_channel, channel_name})
   end
@@ -68,7 +68,7 @@ defmodule StrawHat.Twitch.IRC.Server do
   @doc """
   Send a message to a channel.
   """
-  @spec send_message(chat_server_pid, String.t(), String.t()) :: :ok
+  @spec send_message(server_pid, String.t(), String.t()) :: :ok
   def send_message(pid, channel_name, message) do
     GenServer.cast(pid, {:send_message, channel_name, message})
   end
